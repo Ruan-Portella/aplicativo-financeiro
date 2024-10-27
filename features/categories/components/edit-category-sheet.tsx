@@ -6,24 +6,24 @@ import {
   SheetHeader,
   SheetTitle
 } from '@/components/ui/sheet'
-import { AccountForm, FormValues } from './account-form';
-import { useOpenAccount } from '../hooks/use-open-account';
-import { useGetAccount } from '../api/use-get-account';
+import { CategoryForm, FormValues } from './category-form';
+import { useOpenCategories } from '../hooks/use-open-categories';
+import { useGetCategory } from '../api/use-get-category';
 import { Loader2 } from 'lucide-react';
-import { useEditAccount } from '../api/use-edit-account';
-import { useDeleteAccount } from '../api/use-delete-account';
+import { useEditCategory } from '../api/use-edit-category';
+import { useDeleteCategory } from '../api/use-delete-category';
 import { useConfirm } from '@/hooks/use-confirm';
 
-export default function EditAccountsSheet() {
-  const { isOpen, onClose, id } = useOpenAccount();
-  const [ConfirmDialog, confirm] = useConfirm('Are you sure you want to delete this account?', 'You are about to delete this account');
+export default function EditCategoriesSheet() {
+  const { isOpen, onClose, id } = useOpenCategories();
+  const [ConfirmDialog, confirm] = useConfirm('Are you sure you want to delete this category?', 'You are about to delete this category');
 
-  const accountQuery = useGetAccount(id);
-  const editMutation = useEditAccount(id);
-  const deleteMutation = useDeleteAccount(id);
+  const categoryQuery = useGetCategory(id);
+  const editMutation = useEditCategory(id);
+  const deleteMutation = useDeleteCategory(id);
 
   const isPending = editMutation.isPending || deleteMutation.isPending;
-  const isLoading = accountQuery.isLoading;
+  const isLoading = categoryQuery.isLoading;
 
   const onSubmit = (values: FormValues) => {
     editMutation.mutate(values, {
@@ -33,8 +33,8 @@ export default function EditAccountsSheet() {
     })
   };
 
-  const defaultValues = accountQuery.data ? {
-    name: accountQuery.data.name,
+  const defaultValues = categoryQuery.data ? {
+    name: categoryQuery.data.name,
   } : {
     name: '',
   };
@@ -56,10 +56,10 @@ export default function EditAccountsSheet() {
       <Sheet open={isOpen} onOpenChange={onClose}>
         <SheetContent className='space-y-4'>
           <SheetHeader>
-            <SheetTitle>Edit Account</SheetTitle>
+            <SheetTitle>Edit Category</SheetTitle>
           </SheetHeader>
           <SheetDescription>
-            Edit an existing account.
+            Edit an existing category.
           </SheetDescription>
           {
             isLoading ? (
@@ -67,7 +67,7 @@ export default function EditAccountsSheet() {
                 <Loader2 className='size-4 text-muted-foreground animate-spin' />
               </div>
             ) : (
-              <AccountForm id={id} onSubmit={onSubmit} disabled={isPending} defaultValues={defaultValues} onDelete={onDelete} />
+              <CategoryForm id={id} onSubmit={onSubmit} disabled={isPending} defaultValues={defaultValues} onDelete={onDelete} />
             )
           }
         </SheetContent>
