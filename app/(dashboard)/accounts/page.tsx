@@ -46,7 +46,7 @@ export default function Accounts() {
           </Button>
         </CardHeader>
         <CardContent>
-          <DataTable columns={columns} data={accounts} filterKey='email' onDelete={(row) => {
+          <DataTable columns={columns} data={accounts} filterKey='name' onDelete={(row) => {
             const ids = row.map((r) => r.original.id);
             deleteAccounts.mutate({ ids });
           }} disabled={isDisabled} />
