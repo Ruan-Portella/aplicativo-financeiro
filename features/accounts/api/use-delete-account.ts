@@ -9,7 +9,6 @@ export const useDeleteAccount = (id?: string) => {
   const queryClient = useQueryClient();
   const mutation = useMutation<ResponseType, Error>({
     mutationFn: async () => {
-      console.log('id', id);
       const response = await client.api.accounts[':id']['$delete']({ param: { id } });
       return await response.json();
     },

@@ -9,7 +9,6 @@ export const useDeleteCategory = (id?: string) => {
   const queryClient = useQueryClient();
   const mutation = useMutation<ResponseType, Error>({
     mutationFn: async () => {
-      console.log('id', id);
       const response = await client.api.categories[':id']['$delete']({ param: { id } });
       return await response.json();
     },

@@ -81,6 +81,22 @@ const app = new Hono()
 
       return c.json({ data });
     })
+  .post('/bulk-create',
+    clerkMiddleware(),
+    zValidator('json', z.array(insertTransactionsSchema.omit({ id: true }))),
+    async (c) => {
+      const auth = getAuth(c);
+      const values = c.req.valid('json');
+
+      if (!auth?.userId) {
+        return c.json({ message: 'Unauthorized' }, 401);
+      }
+
+      const data = await db.insert(transactions).values(values.map((value) => ({id: createId(), ...value}))).returning();
+
+      return c.json({ data });
+    }
+  )
   .post(
     '/bulk-delete',
     clerkMiddleware(),
@@ -132,16 +148,16 @@ const app = new Hono()
       }
 
       const transactionsToUpdate = db.$with('transactions_to_update')
-      .as(db.select({ id: transactions.id })
-        .from(transactions)
-        .innerJoin(accounts, eq(transactions.accountId, accounts.id))
-        .where(and(eq(transactions.id, id), eq(accounts.userId, auth.userId))));
+        .as(db.select({ id: transactions.id })
+          .from(transactions)
+          .innerJoin(accounts, eq(transactions.accountId, accounts.id))
+          .where(and(eq(transactions.id, id), eq(accounts.userId, auth.userId))));
 
       const [data] = await db.with(transactionsToUpdate)
-      .update(transactions)
-      .set(values)
-      .where(inArray(transactions.id, sql`(select id from ${transactionsToUpdate})`))
-      .returning();
+        .update(transactions)
+        .set(values)
+        .where(inArray(transactions.id, sql`(select id from ${transactionsToUpdate})`))
+        .returning();
 
       if (!data) {
         return c.json({ message: 'Not found' }, 404);
@@ -166,15 +182,15 @@ const app = new Hono()
       }
 
       const transactionsToDelete = db.$with('transactions_to_delete')
-      .as(db.select({ id: transactions.id })
-        .from(transactions)
-        .innerJoin(accounts, eq(transactions.accountId, accounts.id))
-        .where(and(eq(transactions.id, id), eq(accounts.userId, auth.userId))));
+        .as(db.select({ id: transactions.id })
+          .from(transactions)
+          .innerJoin(accounts, eq(transactions.accountId, accounts.id))
+          .where(and(eq(transactions.id, id), eq(accounts.userId, auth.userId))));
 
       const [data] = await db.with(transactionsToDelete)
-      .delete(transactions)
-      .where(inArray(transactions.id, sql`(select id from ${transactionsToDelete})`))
-      .returning();
+        .delete(transactions)
+        .where(inArray(transactions.id, sql`(select id from ${transactionsToDelete})`))
+        .returning();
 
       if (!data) {
         return c.json({ message: 'Not found' }, 404);
