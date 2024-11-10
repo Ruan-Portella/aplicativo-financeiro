@@ -34,7 +34,6 @@
     "@tanstack/react-table": "^8.20.5",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
-    "cors": "^2.8.5",
     "date-fns": "^3.6.0",
     "drizzle-orm": "^0.30.10",
     "drizzle-zod": "^0.5.1",
