@@ -10,10 +10,8 @@ import {
   useRouter,
   useSearchParams
 } from 'next/navigation';
-import { useGetAccounts } from '@/features/accounts/api/use-get-accounts';
-import { useGetSummary } from '@/features/summary/api/use-get-summary';
 
-import { cn, formatDateRange } from '@/lib/utils';
+import {formatDateRange } from '@/lib/utils';
 
 import { Button } from './ui/button';
 import { Calendar } from './ui/calendar';
