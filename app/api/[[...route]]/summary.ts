@@ -28,8 +28,10 @@ const app = new Hono()
 
       const startDate = from ? parse(from, 'yyyy-MM-dd', new Date()) : defaultFrom;
       const endDate = to ? parse(to, 'yyyy-MM-dd', new Date()) : defaultTo;
+      
 
       const periodLength = differenceInDays(endDate, startDate) + 1;
+      
       const lastPeriodStart = subDays(startDate, periodLength);
       const lastPeriodEnd = subDays(endDate, periodLength);
 
@@ -52,7 +54,7 @@ const app = new Hono()
 
       const [currentPeriod] = await fetchFinancialData(auth.userId, startDate, endDate);
       const [lastPeriod] = await fetchFinancialData(auth.userId, lastPeriodStart, lastPeriodEnd);
-
+      
       const incomeChange = calculatePercentageChange(currentPeriod.income, lastPeriod.income);
       const expensesChange = calculatePercentageChange(currentPeriod.expenses, lastPeriod.expenses);
       const remainingChange = calculatePercentageChange(currentPeriod.remaining, lastPeriod.remaining);
@@ -77,7 +79,7 @@ const app = new Hono()
         finalCategories.push({ name: 'Other', value: otherSum });
       }
 
-      const activeDays = await db.select({ date: transactions.date, income: sql`SUM(CASE WHEN ${transactions.amount} >= 0 THEN ${transactions.amount} ELSE 0 END)`.mapWith(Number), expenses: sql`SUM(CASE WHEN ${transactions.amount} < 0 THEN ${transactions.amount} ELSE 0 END)`.mapWith(Number)}).from(transactions).innerJoin(accounts, eq(transactions.accountId, accounts.id)).where(
+      const activeDays = await db.select({ date: transactions.date, income: sql`SUM(CASE WHEN ${transactions.amount} >= 0 THEN ${transactions.amount} ELSE 0 END)`.mapWith(Number), expenses: sql`SUM(CASE WHEN ${transactions.amount} < 0 THEN ABS(${transactions.amount}) ELSE 0 END)`.mapWith(Number)}).from(transactions).innerJoin(accounts, eq(transactions.accountId, accounts.id)).where(
         and(
           accountId ? eq(transactions.accountId, accountId) : undefined,
           eq(accounts.userId, auth.userId),

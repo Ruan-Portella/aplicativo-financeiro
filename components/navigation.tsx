@@ -24,10 +24,10 @@ const routes = [
     href: '/categories',
     label: 'Categories'
   },
-  {
-    href: '/settings',
-    label: 'Settings'
-  }
+  // {
+  //   href: '/settings',
+  //   label: 'Settings'
+  // }
 ]
 
 export default function Navigation() {
